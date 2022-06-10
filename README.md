@@ -2,7 +2,7 @@
 
 ### How to test
 
-This is a simple NFT marketplace where anyone can create an auction with their NFT. 
+This is a simple NFT marketplace where anyone can create an auction with their NFT, anyone can bid within a specified time, highest bid gets the NFT, auctioneer gets his money and the rest get their refunds. 
 Kindly follow the instructions to test the full flow. 
 
 1. Get a full ipfs link and paste it in the mintToken function (can upload an image to pinata to get one).
