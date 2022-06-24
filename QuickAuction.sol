@@ -15,7 +15,6 @@ contract QuickAuction is ERC721URIStorage {
         string title;
         uint256 tokenId;
         address owner;
-        uint256 startPrice;
         uint256 highestBid;
         address highestBidder;
         address[] buyers;
@@ -70,7 +69,7 @@ contract QuickAuction is ERC721URIStorage {
         auctions[id].id = id;
         auctions[id].title = _title;
         auctions[id].tokenId = _tokenId;
-        auctions[id].startPrice = _startPrice;
+        auctions[id].highestBid = _startPrice;
         auctions[id].endTime = block.timestamp + _endTime;
         auctions[id].owner = msg.sender;
         auctions[id].isActive = true;
@@ -83,15 +82,12 @@ contract QuickAuction is ERC721URIStorage {
     function bid (uint256 _id) payable external isTimeUp(_id) {
         require(block.timestamp < auctions[_id].endTime || auctions[_id].isActive, "Auction ended");
         require(msg.sender != auctions[_id].owner, "Owner can't bid duh!!!");
-        require(msg.value > 0, "Send something duh!!!");
-        require(msg.value > auctions[_id].startPrice, "Amount is less than start price");
 
         uint256 currentBid = bids[msg.sender][_id] + msg.value;
 
-        if (msg.value > auctions[_id].highestBid && msg.value > auctions[_id].startPrice) {
+        if (msg.value > auctions[_id].highestBid) {
             auctions[_id].highestBid = msg.value;
         } else {
-            require(currentBid > auctions[_id].startPrice, "Amount is less than start price");
             require(currentBid > auctions[_id].highestBid, "Amount is less than current bid");
             auctions[_id].highestBid = currentBid;
         }
@@ -106,13 +102,14 @@ contract QuickAuction is ERC721URIStorage {
     }
 
     /* Auction is over, collect your rewards */
-    function timeUp (uint256 _id) external isTimeUp(_id) {
+    function timeUp (uint256 _id, bool willReducePrice) external isTimeUp(_id) {
         require(!auctions[_id].isActive, "Auction has not yet ended");
-        require(block.timestamp > auctions[_id].endTime, "Auction has not expired");
 
         if (auctions[_id].owner == msg.sender && !auctions[_id].ownerTaken) {
             if (auctions[_id].highestBidder == address(0)) {
-                _transfer(address(this), msg.sender, auctions[_id].tokenId);
+                willReducePrice
+                    ? revert("Price too hig or no bidder. Please reduce your price using reducePrice()")
+                    : _transfer(address(this), msg.sender, auctions[_id].tokenId);
             } else {
                 payable(auctions[_id].owner).transfer(auctions[_id].highestBid);
             }
@@ -124,6 +121,18 @@ contract QuickAuction is ERC721URIStorage {
             payable(msg.sender).transfer(bids[msg.sender][_id]);
         }
         bids[msg.sender][_id] = 0;
+    }
+
+    /* Auction is over and there is no bidder, reduce your starting price */
+    function reducePrice (uint256 _id, uint256 _endAfter, uint256 _newBid) external isTimeUp(_id) {
+        require(auctions[_id].owner == msg.sender, "Wrong auction, not yours");
+        require(!auctions[_id].isActive, "Auction has not yet ended");
+        require(auctions[_id].highestBidder == address(0), "There is already a bidder, call timeUp()");
+        require(_newBid < auctions[_id].highestBid, "Yo, your starting price needs to be lower...");
+
+        auctions[_id].highestBid = _newBid;
+        auctions[_id].endTime = block.timestamp + _endAfter;
+        auctions[_id].isActive = true;
     }
 
     /* Get details of the auction with that id */
