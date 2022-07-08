@@ -19,11 +19,6 @@
       .alert {
         background-color: yellow;
         padding: 16px;
-        display: none;
-      }
-
-      #main {
-        display: none;
       }
     </style>
   </head>
@@ -48,18 +43,17 @@
         <div class="fixed-action-btn">
           <button
             data-target="addModal"
-            id="bju"
             class="btn-floating btn-large waves-effect btn modal-trigger waves-light red"
           >
             <i class="fa fa-plus"></i>
           </button>
         </div>
       </div>
-      <div class="alert mt-2">
-        <span id="notification">⌛ Loading...</span>
-      </div>
-      <div class="container" id="home">
-        <h3>Welcome</h3>
+      <div class="container my-stories">
+        <div class="alert mt-2">
+          <span id="notification">⌛ Loading...</span>
+        </div>
+        <h3>Welcome {{name}}</h3>
         <p>Here are your stories</p>
 
         <table class="striped">
@@ -71,25 +65,50 @@
               <th></th>
             </tr>
           </thead>
-          <tbody id="my-stories">
+          <tbody>
             <tr>
               <td><a href="#viewModal" class="modal-trigger">My Post</a></td>
               <td>July 6th 2022, 9:46:25 pm</td>
               <td><span class="dash-status">Private</span></td>
               <td>
-                <button id="delete-story" class="btn red btn-small">
+                <button type="submit" class="btn red btn-small">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td><a href="/stories/{{_id}}">{{truncate title 30}} </a></td>
+              <td>{{formatDate createdAt "MMM Do YYYY, h:mm:ss a"}}</td>
+              <td><span class="dash-status">{{status}} </span></td>
+              <td>
+                <input type="hidden" name="_method" value="DELETE" />
+                <button class="btn red btn-small">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td><a href="/stories/{{_id}}">{{truncate title 30}} </a></td>
+              <td>{{formatDate createdAt "MMM Do YYYY, h:mm:ss a"}}</td>
+              <td><span class="dash-status">{{status}} </span></td>
+              <td>
+                <button type="submit" class="btn red btn-small">
                   <i class="fas fa-trash"></i>
                 </button>
               </td>
             </tr>
           </tbody>
         </table>
+        <p>
+          You haven't created any stories. Why not create
+          <a href="#addModal" class="modal-trigger">one</a>
+        </p>
       </div>
       <div class="container">
-        <h1 class="center">All Public Stories</h1>
-        <div class="row">
-          <div id="all-stories">
-            <div class="col">
+        <div class="all-stories">
+          <h1 class="center">All Public Stories</h1>
+          <div class="row">
+            <div class="col s12 m4">
               <div class="card">
                 <div class="card-content center-align">
                   <h5>My Story</h5>
@@ -102,13 +121,17 @@
                 <div class="card-action center-align">
                   <button
                     data-target="viewModal"
-                    class="btn btn-grey modal-trigger open-view"
+                    class="btn btn-grey modal-trigger"
                   >
                     Read More
                   </button>
                 </div>
               </div>
             </div>
+            <!-- <p>
+          You haven't created any stories. Why not create
+          <a href="/stories/new">one</a>
+        </p> -->
           </div>
         </div>
       </div>
@@ -134,28 +157,25 @@
                   <label for="status">Status</label>
                 </div>
               </div>
-              <div class="row mt5">
+              <div class="row">
                 <div class="input-field">
-                  <input type="text" name="description" id="description" />
-                  <label for="description">Description</label>
+                  <h5>Tell Us Your Story</h5>
+                  <textarea name="body" id="body"></textarea>
                 </div>
               </div>
             </form>
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn" id="newStory">Save</button>
-          <a
-            href="#!"
-            id="closeAdd"
-            class="modal-close waves-effect waves-green btn-flat"
+          <button class="btn">Save</button>
+          <a href="#!" class="modal-close waves-effect waves-green btn-flat"
             >Cancel</a
           >
         </div>
       </div>
 
       <div id="viewModal" class="modal modal-fixed-footer">
-        <div class="modal-content" id="viewModalContent">
+        <div class="modal-content">
           <h4>My Story</h4>
           <h6>July 6th 2022, 9:46:25 pm</h6>
           <p>Description of my story</p>
@@ -190,15 +210,21 @@
       src="https://code.jquery.com/jquery-2.1.1.min.js"
     ></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.16.1/ckeditor.js"
+      integrity="sha512-2nFxKVmFuBhAR45DBnAANBjtxzf7z0m6wRU7NOquxibA6efrQpUtdjFT4wzqewqTI3/cCNbBzJNUtu1NxjFiKw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
     <script>
-      // document.getElementById("bju").addEventListener("click", () => {
-      //   console.log($("#addModal"));
-      // const instance = M.Modal.getInstance("#addModal");
-      // instance.open();
-      // });
-      M.FormSelect.init(document.querySelector("#status"));
       $(document).ready(function () {
         $(".modal").modal();
+      });
+
+      M.FormSelect.init(document.querySelector("#status"));
+
+      CKEDITOR.replace("body", {
+        plugins: "wysiwygarea, toolbar, basicstyles, link",
       });
     </script>
   </body>
