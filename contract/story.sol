@@ -61,7 +61,7 @@ contract StoryBook {
         }
     }
 
-    /* Get all stories created */
+    /* Get all stories */
     function getStories() external view returns (Story[] memory story) {
         return stories;
     }

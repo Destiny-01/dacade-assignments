@@ -1,0 +1,206 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Storybooks</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+      integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
+    <style>
+      .alert {
+        background-color: yellow;
+        padding: 16px;
+        display: none;
+      }
+
+      #main {
+        display: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="main">
+      <div class="header">
+        <nav class="grey darken-3">
+          <div class="nav-wrapper container">
+            <a href="/dashboard" class="brand-logo center">StoryBooks</a>
+            <ul class="right">
+              <li>
+                <a class="waves-effect waves-light btn" id="account"
+                  >Connect Wallet</a
+                >
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      <div class="add_btn">
+        <div class="fixed-action-btn">
+          <button
+            data-target="addModal"
+            id="bju"
+            class="btn-floating btn-large waves-effect btn modal-trigger waves-light red"
+          >
+            <i class="fa fa-plus"></i>
+          </button>
+        </div>
+      </div>
+      <div class="alert mt-2">
+        <span id="notification">⌛ Loading...</span>
+      </div>
+      <div class="container" id="home">
+        <h3>Welcome</h3>
+        <p>Here are your stories</p>
+
+        <table class="striped">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="my-stories">
+            <tr>
+              <td><a href="#viewModal" class="modal-trigger">My Post</a></td>
+              <td>July 6th 2022, 9:46:25 pm</td>
+              <td><span class="dash-status">Private</span></td>
+              <td>
+                <button id="delete-story" class="btn red btn-small">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="container">
+        <h1 class="center">All Public Stories</h1>
+        <div class="row">
+          <div id="all-stories">
+            <div class="col">
+              <div class="card">
+                <div class="card-content center-align">
+                  <h5>My Story</h5>
+                  <p>This is a description of my story</p>
+                  <br />
+                  <div class="chip">
+                    <a href="#">0x2ef...6fd34</a>
+                  </div>
+                </div>
+                <div class="card-action center-align">
+                  <button
+                    data-target="viewModal"
+                    class="btn btn-grey modal-trigger open-view"
+                  >
+                    Read More
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Structure -->
+      <div id="addModal" class="modal modal-fixed-footer">
+        <div class="modal-content">
+          <h4 class="center">Create New Story</h4>
+          <div class="row">
+            <form action="/stories" method="POST" class="col s12">
+              <div class="row">
+                <div class="input-field">
+                  <input
+                    type="text"
+                    name="title"
+                    id="title"
+                    placeholder="Short title, 30 letters max"
+                    maxlength="30"
+                  />
+                  <label for="title">Title</label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="input-field">
+                  <select name="status" id="status">
+                    <option value="public" selected>Public</option>
+                    <option value="private">Private</option>
+                  </select>
+                  <label for="status">Status</label>
+                </div>
+              </div>
+              <div class="row mt5">
+                <div class="input-field">
+                  <input type="text" name="description" id="description" />
+                  <label for="description">Description</label>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn" id="newStory">Save</button>
+          <a
+            href="#!"
+            id="closeAdd"
+            class="modal-close waves-effect waves-green btn-flat"
+            >Cancel</a
+          >
+        </div>
+      </div>
+
+      <div id="viewModal" class="modal modal-fixed-footer">
+        <div class="modal-content" id="viewModalContent">
+          <h4>My Story</h4>
+          <h6>July 6th 2022, 9:46:25 pm</h6>
+          <p>Description of my story</p>
+        </div>
+        <div class="modal-footer">
+          <a href="#!" class="modal-close waves-effect waves-green btn-flat"
+            >Close</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="login">
+      <div class="card-content">
+        <h3><i class="fas fa-book-reader"></i>Storybooks</h3>
+        <div class="section">
+          <p class="lead">
+            Create public and private stories from your life and see other's
+            public stories
+          </p>
+        </div>
+        <div class="divider"></div>
+        <div class="section">
+          <button class="btn red darken-1" id="connectAccount">
+            Connect Wallet to Continue
+          </button>
+        </div>
+      </div>
+    </div>
+    <script
+      type="text/javascript"
+      src="https://code.jquery.com/jquery-2.1.1.min.js"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+      M.FormSelect.init(document.querySelector("#status"));
+      $(document).ready(function () {
+        $(".modal").modal();
+      });
+    </script>
+  <script type="text/javascript" src="main.js"></script></body>
+</html>

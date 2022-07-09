@@ -1,30 +1,23 @@
 import Web3 from "web3";
 import { newKitFromWeb3 } from "@celo/contractkit";
-import marketplaceAbi from "../contract/story.abi.json";
+import abi from "../contract/story.abi.json";
 
-const ERC20_DECIMALS = 18;
-const MPContractAddress = "0x06b57ca3562a51aB1257895cbB2C844DE2f09f6B";
+const contractAddress = "0x902a2e5F0aB75E3022E212377A86A030fc1E224a";
 
 let kit;
 let contract;
-let products = [];
 
-const connectCeloWallet = async function () {
+const connectCeloWallet = async () => {
   if (window.celo) {
     try {
-      notification("⚠️ Please approve this DApp to use it.");
       await window.celo.enable();
-      notificationOff();
       const web3 = new Web3(window.celo);
       kit = newKitFromWeb3(web3);
 
       const accounts = await kit.web3.eth.getAccounts();
       kit.defaultAccount = accounts[0];
-      const bal = await kit.getTotalBalance(accounts[0]);
-      console.log(bal);
 
-      contract = new kit.web3.eth.Contract(marketplaceAbi, MPContractAddress);
-      console.log(contract);
+      contract = new kit.web3.eth.Contract(abi, contractAddress);
     } catch (error) {
       notification(`⚠️ ${error}.`);
     }
@@ -33,34 +26,11 @@ const connectCeloWallet = async function () {
   }
 };
 
-const getBalance = () => {
-  console.log(kit);
-  if (!kit) {
-    return;
-  }
-  console.log("hmmmm", kit.defaultAccount);
-  kit.getTotalBalance(kit.defaultAccount).then((totalBalance) => {
-    const cUSDBalance = totalBalance.cUSD.shiftedBy(-ERC20_DECIMALS).toFixed(2);
-    console.log(cUSDBalance);
-    if (!cUSDBalance) {
-      document.getElementById("balance").innerHTML = "Connect Wallet";
-    }
-    document.getElementById(
-      "balance"
-    ).innerHTML = `${cUSDBalance} cUSD in account ${kit.defaultAccount.slice(
-      0,
-      5
-    )}...${kit.defaultAccount.slice(-5)}`;
-  });
-};
-
 const showStory = (id) => {
-  console.log("ok", id);
   contract.methods
     .getStory(id)
     .call()
     .then((story) => {
-      console.log(story);
       document.getElementById("viewModalContent").innerHTML = `
       <h4>${story.title}</h4>
       <h6>${new Date(story.createdAt * 1000)} </h6>
@@ -73,18 +43,16 @@ const showStory = (id) => {
     });
 };
 
-const getProducts = () => {
-  console.log("Get Products", contract.methods);
+const getStories = () => {
   contract.methods
     .getStories()
     .call()
     .then((stories) => {
       console.log(stories);
       const myStories = stories.filter(
-        (x) =>
-          x.owner.toUpperCase() === window.celo.selectedAddress.toUpperCase()
+        (x) => x.owner.toUpperCase() === kit.defaultAccount.toUpperCase()
       );
-      if (myStories.length === 0) {
+      if (myStories.length === 0 || myStories.every((x) => x.createdAt === 0)) {
         document.getElementById("my-stories").innerHTML = `
           <p>
             You haven't created any stories. Why not create
@@ -117,6 +85,9 @@ const renderPublicStories = (stories) => {
   const el = document.getElementById("all-stories");
   el.innerHTML = "";
   stories.forEach((story) => {
+    if (story.createdAt === 0) {
+      return;
+    }
     const newDiv = document.createElement("div");
     newDiv.className = "col";
     newDiv.innerHTML = publicStoryTemplate(story);
@@ -168,28 +139,25 @@ const publicStoryTemplate = (story) => {
   `;
 };
 
-$(document).on("click", ".open-view", () => {
-  const id = $(".open-view").data("id");
-  console.log(id, $(".open-view"));
-  showStory(id);
-});
-
-$(document).on("click", ".delete-story", () => {
-  const id = $(".delete-story").data("id");
-  console.log(id, $(".delete-story"));
+$(document).on("click", ".delete-story", function () {
+  const id = $(this).data("id");
   deleteStory(id);
 });
 
-document.getElementById("balance1").addEventListener("click", (e) => {
+$(document).on("click", ".open-view", function () {
+  const id = $(this).data("id");
+  showStory(id);
+});
+
+document.getElementById("connectAccount").addEventListener("click", (e) => {
   connectCeloWallet().then(() => {
-    console.log("first");
     document.getElementById("main").style.display = "block";
     document.getElementById("login").style.display = "none";
-    document.getElementById("balance").innerHTML = `${kit.defaultAccount.slice(
+    document.getElementById("account").innerHTML = `${kit.defaultAccount.slice(
       0,
       5
     )}...${kit.defaultAccount.slice(-5)}`;
-    getProducts();
+    getStories();
   });
 });
 
@@ -207,15 +175,13 @@ document.querySelector("#newStory").addEventListener("click", async (e) => {
   ];
   notification(`⌛ Adding "${params[1]}"...`);
   try {
-    console.log(params, contract.methods);
     const result = await contract.methods
       .createStory(...params)
       .send({ from: kit.defaultAccount });
-    console.log(result);
 
     notification(`🎉 You successfully added "${params[1]}".`);
     document.getElementById("closeAdd").click();
-    getProducts();
+    getStories();
   } catch (error) {
     console.log(error);
     notification(`⚠️ ${error}.`);
@@ -224,14 +190,13 @@ document.querySelector("#newStory").addEventListener("click", async (e) => {
 
 const deleteStory = (id) => {
   try {
+    notification(`🎉 Deleting your story...`);
     contract.methods
       .deleteStory(id)
       .send({ from: kit.defaultAccount })
-      .then((result) => {
-        console.log(result);
-
+      .then(() => {
         notification(`🎉 You successfully deleted the story`);
-        getProducts();
+        getStories();
       });
   } catch (error) {
     console.log(error);
@@ -242,8 +207,7 @@ const deleteStory = (id) => {
 function notification(_text) {
   document.querySelector(".alert").style.display = "block";
   document.querySelector("#notification").textContent = _text;
-}
-
-function notificationOff() {
-  document.querySelector(".alert").style.display = "none";
+  setTimeout(() => {
+    document.querySelector(".alert").style.display = "none";
+  }, 5000);
 }
