@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack://src/App.css"],"names":[],"mappings":"AAAA,OACE,qBAAwB,CACxB,YAAa,CACb,YACF,CAEA,MACE,gBACF,CAEA,MACE,eACF","file":"main.e6e9d18d.chunk.css","sourcesContent":[".alert {\n  background-color: yellow;\n  padding: 16px;\n  display: none;\n}\n\n.edit {\n  margin-right: 8px;\n}\n\n.load {\n  margin-top: 50vh;\n}\n"]}

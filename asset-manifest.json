@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/dacade-assignments/static/css/main.e6e9d18d.chunk.css",
+    "main.js": "/dacade-assignments/static/js/main.4f289af6.chunk.js",
+    "main.js.map": "/dacade-assignments/static/js/main.4f289af6.chunk.js.map",
+    "runtime-main.js": "/dacade-assignments/static/js/runtime-main.e9456b74.js",
+    "runtime-main.js.map": "/dacade-assignments/static/js/runtime-main.e9456b74.js.map",
+    "static/css/2.b9b73e1a.chunk.css": "/dacade-assignments/static/css/2.b9b73e1a.chunk.css",
+    "static/js/2.8e356370.chunk.js": "/dacade-assignments/static/js/2.8e356370.chunk.js",
+    "static/js/2.8e356370.chunk.js.map": "/dacade-assignments/static/js/2.8e356370.chunk.js.map",
+    "static/js/3.3b49c859.chunk.js": "/dacade-assignments/static/js/3.3b49c859.chunk.js",
+    "static/js/3.3b49c859.chunk.js.map": "/dacade-assignments/static/js/3.3b49c859.chunk.js.map",
+    "index.html": "/dacade-assignments/index.html",
+    "static/css/2.b9b73e1a.chunk.css.map": "/dacade-assignments/static/css/2.b9b73e1a.chunk.css.map",
+    "static/css/main.e6e9d18d.chunk.css.map": "/dacade-assignments/static/css/main.e6e9d18d.chunk.css.map",
+    "static/js/2.8e356370.chunk.js.LICENSE.txt": "/dacade-assignments/static/js/2.8e356370.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.e9456b74.js",
+    "static/css/2.b9b73e1a.chunk.css",
+    "static/js/2.8e356370.chunk.js",
+    "static/css/main.e6e9d18d.chunk.css",
+    "static/js/main.4f289af6.chunk.js"
+  ]
+}
