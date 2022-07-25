@@ -1,0 +1,13 @@
+.alert {
+  background-color: yellow;
+  padding: 16px;
+  display: none;
+}
+
+.edit {
+  margin-right: 8px;
+}
+
+.load {
+  margin-top: 50vh;
+}
