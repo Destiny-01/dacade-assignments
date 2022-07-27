@@ -53,9 +53,7 @@ export function getStories() {
 }
 
 export async function getMyStories() {
-  const sender = await getAccountId();
-  console.log(sender);
-  return window.contract.getMyStories({ sender });
+  return window.contract.getMyStories();
 }
 
 export function formatDate(date) {
