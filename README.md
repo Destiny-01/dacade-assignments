@@ -8,7 +8,7 @@ This is a very simple story book app where users can
 * View everyone's public stories, all on a nice ui. 
 
 ## Live Demo
-[Storybook Dapp](https://destiny-01.github.io/dacade-assignments)
+[Storybook Dapp](https://near-storybook.netlify.app)
 
 ## Usage
 
