@@ -1,4 +1,4 @@
-import { context } from "near-sdk-as";
+import {context, ContractPromiseBatch} from "near-sdk-as";
 import { Story, storiesStorage, myStories } from "./model";
 
 export function newStory(story: Story): void {
@@ -74,8 +74,8 @@ export function getStories(): Story[] | null {
   }
 }
 
-export function getMyStories(sender: string): Story[] | null {
-  const myStoriesId = myStories.get(sender);
+export function getMyStories(): Story[] | null {
+  const myStoriesId = myStories.get(context.sender);
   const allStories = storiesStorage.values();
   let filter: Story[] = [];
   for (let i = 0; i < allStories.length; i++) {
@@ -88,4 +88,18 @@ export function getMyStories(sender: string): Story[] | null {
   } else {
     return null;
   }
+}
+
+
+export function buyMeACoffee(id: string): void {
+  let storedStory = storiesStorage.get(id);
+  if (storedStory === null) {
+    throw new Error(`a story with id ${id} does not exists`);
+  }
+
+  if (storedStory.status === '2') {
+    throw new Error(`a story with id ${id} does not exists`);
+  }
+
+  ContractPromiseBatch.create(storedStory.owner).transfer(context.attachedDeposit);
 }
